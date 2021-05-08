@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.DS_Store
+plugin_pg_scheduler/plugin_pg_scheduler/settings.py
