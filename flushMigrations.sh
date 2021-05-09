@@ -17,7 +17,7 @@ else
   exit 0
 fi
 
-if [ -z ${db_uat_user} ] || [ -z ${db_uat_passwd} ]  
+if [ -z ${db_uat_user} ] || [ -z ${db_uat_passwd} ] || [ -z ${tflow_db} ]  || [ -z ${plugin_db} ]  
 then
       echo ">> No config"
       exit 0
@@ -30,7 +30,7 @@ find . -path "*/plugin_pg_scheduler/migrations/*.py" -not -name "__init__.py" -d
 find . -path "*/plugin_pg_scheduler/migrations/*.pyc"  -delete
 
 # Optional
-echo ">> Deleting sqlite  (if exists) database"
+echo ">> Deleting sqlite (if exists) database"
 find . -name "db.sqlite3" -delete
 
 echo ">> Running manage.py makemigrations"
@@ -40,7 +40,6 @@ echo ">> Running manage.py migrate auth"
 python plugin_pg_scheduler/manage.py migrate --database=auth_db
 
 echo ">> Postgres Config"
-
 for file in ./bucket/db_migration_bootstrap/*; do
     PGPASSWORD=${db_uat_passwd} psql -U ${db_uat_user} -f ${file}
 done

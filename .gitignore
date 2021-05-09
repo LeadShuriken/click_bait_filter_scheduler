@@ -138,3 +138,4 @@ app.properties
 
 /.vscode/**
 /.pytest_cache/**
+plugin_pg_scheduler/authentication/settings.py
