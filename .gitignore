@@ -128,7 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
-authentication/authentication/settings.py
 
 # Custom
 
@@ -138,4 +137,5 @@ app.properties
 
 /.vscode/**
 /.pytest_cache/**
-plugin_pg_scheduler/authentication/settings.py
+plugin_pg_scheduler/scheduler/settings.py
+secrets.json

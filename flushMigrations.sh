@@ -34,7 +34,7 @@ echo ">> Deleting sqlite (if exists) database"
 find . -name "db.sqlite3" -delete
 
 echo ">> Running manage.py makemigrations"
-python plugin_pg_scheduler/manage.py makemigrations authentication
+python plugin_pg_scheduler/manage.py makemigrations scheduler
 
 echo ">> Running manage.py migrate auth"
 python plugin_pg_scheduler/manage.py migrate --database=auth_db
