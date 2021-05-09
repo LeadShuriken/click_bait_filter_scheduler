@@ -128,4 +128,13 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
-plugin_pg_scheduler/plugin_pg_scheduler/settings.py
+authentication/authentication/settings.py
+
+# Custom
+
+/bucket/db_migration_bootstrap/**
+/bucket/db_migration_seed/**
+app.properties
+
+/.vscode/**
+/.pytest_cache/**
