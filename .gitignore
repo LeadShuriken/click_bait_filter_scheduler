@@ -137,5 +137,4 @@ app.properties
 
 /.vscode/**
 /.pytest_cache/**
-plugin_pg_scheduler/scheduler/settings.py
 secrets.json
