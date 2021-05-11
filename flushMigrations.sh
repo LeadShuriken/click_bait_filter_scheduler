@@ -56,4 +56,18 @@ for file in ./bucket/db_migration_seed/*; do
     PGPASSWORD=${db_uat_passwd} psql -U ${db_uat_user} ${plugin_db} -f ${file}
 done
 
+for file in ./bucket/db_migration_priv/db_tflow/*; do
+    PGPASSWORD=${db_uat_passwd} psql -U ${db_uat_user} ${tflow_db} -f ${file}
+done
+
+for file in ./bucket/db_migration_priv/db_plugin/*; do
+    PGPASSWORD=${db_uat_passwd} psql -U ${db_uat_user} ${plugin_db} -f ${file}
+done
+
+echo ">> Django Superuser"
+python plugin_pg_scheduler/manage.py creategroup
+python plugin_pg_scheduler/manage.py createsuperuser2 \
+--username ${super_name} --password ${super_password} \
+--noinput --email ${super_mail} --database=auth_db
+
 echo ">> Done"

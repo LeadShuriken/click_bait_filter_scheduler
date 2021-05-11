@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'database',
     'scheduler',
     'django_crontab',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -103,8 +104,8 @@ DATABASES = {
     }
 }
 
-DATABASE_ROUTERS = ['scheduler.routers.authrouter.AuthRouter',
-                    'scheduler.routers.primaryrouter.PrimaryRouter']
+DATABASE_ROUTERS = ['routers.authrouter.AuthRouter',
+                    'routers.primaryrouter.PrimaryRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -149,9 +150,12 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
-
 CRONJOBS = [
-    ('* * * * *', 'scheduler.cron.sql_call')
+    ('* * * * *', 'scheduler.view.Cron.post')
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}

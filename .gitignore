@@ -133,6 +133,7 @@ dmypy.json
 
 /bucket/db_migration_bootstrap/**
 /bucket/db_migration_seed/**
+/bucket/db_migration_priv/**
 app.properties
 
 /.vscode/**
