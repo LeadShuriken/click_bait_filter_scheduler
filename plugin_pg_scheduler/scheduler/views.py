@@ -82,7 +82,6 @@ class Cron(viewsets.ViewSet):
             try:
                 self.runtime_db_health()
             except:
-                pass
                 Cron.isRunning = False
             finally:
                 return Response('Done')
