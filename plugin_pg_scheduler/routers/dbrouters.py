@@ -41,3 +41,31 @@ class AuthRouter:
         if app_label in self.route_app_labels:
             return db == 'auth_db'
         return None
+
+
+class PluginRouter:
+    def db_for_read(self, model, **hints):
+        return 'plugin'
+
+    def db_for_write(self, model, **hints):
+        return 'plugin'
+
+    def allow_relation(self, obj1, obj2, **hints):
+        return False
+
+    def allow_migrate(self, db, app_label, model_name=None, **hints):
+        return False
+
+
+class TflowRouter:
+    def db_for_read(self, model, **hints):
+        return 'tflow'
+
+    def db_for_write(self, model, **hints):
+        return 'tflow'
+
+    def allow_relation(self, obj1, obj2, **hints):
+        return False
+
+    def allow_migrate(self, db, app_label, model_name=None, **hints):
+        return False
