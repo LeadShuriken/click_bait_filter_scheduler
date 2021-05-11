@@ -81,3 +81,29 @@ BEGIN
     AND (domain_p IS NULL OR u_domain.name = domain_p);
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION plugin.get_link(
+    just_one BOOLEAN DEFAULT FALSE
+)
+RETURNS TABLE (
+    link_id plugin.id_type,
+    name plugin.link_type
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT link.link_id, link.link AS name FROM plugin.link
+    LIMIT CASE WHEN just_one THEN 1 END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE plugin.remove_link(
+    link_id_p plugin.id_type
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM plugin.link WHERE link_id = link_id_p;
+END;
+$$;

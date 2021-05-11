@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS tflow.link (
 
 CREATE TABLE IF NOT EXISTS tflow.link_predictions (
     link_id tflow.id_type PRIMARY KEY,
+    verified BOOLEAN NOT NULL DEFAULT FALSE,
     bScore tflow.bait_score DEFAULT 0.0 NOT NULL,
     bScoreUpdated TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     bScore_last tflow.bait_score DEFAULT 0.0 NOT NULL,
@@ -54,7 +55,8 @@ BEGIN
     SELECT COALESCE((SELECT link_id FROM returnR), ident) INTO ident;
 
     INSERT INTO tflow.link_predictions (link_id, bScore) VALUES (ident, score_p) 
-    ON CONFLICT (link_id) DO UPDATE SET bScore = score_p;
+    ON CONFLICT (link_id) DO UPDATE SET bScore = score_p
+    WHERE NOT link_predictions.verified;
 EXCEPTION 
   WHEN OTHERS THEN 
   ROLLBACK;
@@ -88,7 +90,8 @@ BEGIN
 
             INSERT INTO tflow.link_predictions ( link_id, bScore)
             VALUES (ident, bScores_p[iterator]) ON CONFLICT (link_id)
-            DO UPDATE SET bScore = bScores_p[iterator];
+            DO UPDATE SET bScore = bScores_p[iterator]
+            WHERE NOT link_predictions.verified;
         END LOOP;
     END IF;
 EXCEPTION 
@@ -114,18 +117,32 @@ AFTER UPDATE OF bScore ON tflow.link_predictions
 FOR EACH ROW 
 EXECUTE PROCEDURE tflow.link_predictions_updated();
 
+
 CREATE OR REPLACE PROCEDURE tflow.update_link_predictions(
     link_p tflow.link_type,
-    bScore_p tflow.bait_score
+    bScore_p tflow.bait_score,
+    verified_p BOOLEAN DEFAULT NULL
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    UPDATE tflow.link_predictions SET bScore = bScore_p
-    FROM tflow.link WHERE link_predictions.link_id = link_p;
-EXCEPTION 
-  WHEN OTHERS THEN 
-  ROLLBACK;
-COMMIT;
+    UPDATE tflow.link_predictions AS p
+    SET bScore = bScore_p, verified = COALESCE(verified_p, p.verified)
+    FROM tflow.link AS l 
+    WHERE l.link_id = p.link_id AND l.link = link_p AND NOT p.verified;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION tflow.get_unscored_link(
+    just_one BOOLEAN DEFAULT FALSE
+)
+RETURNS SETOF tflow.link_score
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT link, bscore AS score FROM tflow.link_predictions 
+    JOIN tflow.link USING (link_id)
+    WHERE verified = FALSE LIMIT CASE WHEN just_one THEN 1 END;
 END;
 $$;
