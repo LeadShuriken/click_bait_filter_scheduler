@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
                     try:
                         model_add_perm = Permission.objects.get(name=name)
-                    except Permission.DoesNotExist:
+                    except:
                         logging.warning(
                             "Permission not found with name '{}'.".format(name))
                         continue

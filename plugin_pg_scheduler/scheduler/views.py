@@ -10,6 +10,7 @@ from django.db import connections
 from scheduler.serializers import UserSerializer, GroupSerializer,\
     ChangePasswordSerializer, UpdateUserSerializer
 from requests import get
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -101,3 +102,28 @@ class Cron(viewsets.ViewSet):
                         tempCursor.execute(
                             'CALL plugin.remove_link(%s::plugin.id_type)', [str(row[0])])
                 row = cursor.fetchone()
+
+
+class Rate(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        with connections['tflow'].cursor() as cursor:
+            link = request.query_params['link']
+            if request.data['action'] != 'SKIP':
+                cursor.execute('CALL tflow.update_link_predictions(%s,%s,%s)', [link,
+                                                                                1.0 if request.data['action'] == 'CLICKBAIT' else 0.0, True])
+            else:
+                cursor.execute('CALL tflow.remove_link(%s)', [link])
+        return HttpResponseRedirect('/rate/')
+
+    def list(self, request):
+        return self.ret_template(request)
+
+    def ret_template(self, request):
+        with connections['tflow'].cursor() as cursor:
+            cursor.callproc('tflow.get_unscored_link', [True])
+            row = cursor.fetchone()
+            if row is not None:
+                return HttpResponse(render(request, 'rate_link.html', {'link': row[0], 'score': str(row[1])}))
+            return HttpResponse(render(request, 'rate_link.html', {}))

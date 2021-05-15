@@ -1,20 +1,10 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>Clickbait Updater</title>
-</head>
-<html>
-
-<body>
-    <h1><a href='{src}' target="_blank">{src}</a></h1>
-    <h1>tf_weight: {tf_score}</h1>
-    <h1>
-        <form action="/" method="post">
-            <input type="submit" name="action" value="CLICKBAIT" style="height:200px;width:200px" />
-            <input type="submit" name="action" value="NOTCLICKBAIT" style="height:200px;width:200px" />
-            <input type="submit" name="action" value="SKIP" style="height:200px;width:200px" />
-        </form>
-    </h1>
-
-</html>
+<h1><a href='{{link}}' target="_blank">{{link}}</a></h1>
+<h1>tf_weight: {{score}}</h1>
+<h1>
+    <form action="/rate/?link={{link}}" method="post">
+        {% csrf_token %}
+        <input type="submit" name="action" value="CLICKBAIT" style="height:100px;width:250px" />
+        <input type="submit" name="action" value="NOTCLICKBAIT" style="height:100px;width:250px" />
+        <input type="submit" name="action" value="SKIP" style="height:100px;width:250px" />
+    </form>
+</h1>
