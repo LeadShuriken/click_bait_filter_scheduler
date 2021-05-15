@@ -121,9 +121,11 @@ class Rate(viewsets.ViewSet):
         return self.ret_template(request)
 
     def ret_template(self, request):
+        linkData = {}
         with connections['tflow'].cursor() as cursor:
             cursor.callproc('tflow.get_unscored_link', [True])
             row = cursor.fetchone()
             if row is not None:
-                return HttpResponse(render(request, 'rate_link.html', {'link': row[0], 'score': str(row[1])}))
-            return HttpResponse(render(request, 'rate_link.html', {}))
+                linkData['link'] = row[0]
+                linkData['score'] = str(row[1])
+        return HttpResponse(render(request, 'rate_link.html', linkData))
