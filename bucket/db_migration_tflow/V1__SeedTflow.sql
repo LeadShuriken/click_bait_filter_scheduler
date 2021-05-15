@@ -146,3 +146,13 @@ BEGIN
     WHERE verified = FALSE LIMIT CASE WHEN just_one THEN 1 END;
 END;
 $$;
+
+CREATE OR REPLACE PROCEDURE tflow.remove_link(
+    link_p tflow.link_type
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM tflow.link WHERE link = link_p;
+END;
+$$;
